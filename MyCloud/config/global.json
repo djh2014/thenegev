@@ -1,0 +1,14 @@
+{
+    "applications": {
+        "_default": {
+            "link": "hackerhouse"
+        }, 
+        "hackerhouse": {
+            "applicationId": "Pe2aVvOhSuUgef67pirBiesOAUdEc0evUOjOVVG2", 
+            "masterKey": "IJe1fBMJ8tcRH4OX3RngrFffWR0LChckG4irrHwE"
+        }
+    }, 
+    "global": {
+        "parseVersion": "1.2.7"
+    }
+}

@@ -154,7 +154,6 @@ price = ''
   $("#place-booking").click(placeBooking);
   
   function placeBooking(event){
-    debugger;
     // 1. Create the booking from the input:
     var booking = createBookingFromInput();
 
@@ -168,12 +167,15 @@ price = ''
       panelLabel:  'Checkout',
       // 3. Set the token and send to the server to charge and book:
       token: function(token) {
-        debugger;
         booking.set("cardToken",token.id);
-        booking.save({success: function(toekn){
-          //TODO(gutman): give better feedback.
-          location.reload();
-        }});
+        booking.save(null, {
+          success: function(booking) {
+            alert("Book!");
+          },
+          error: function(booking, error) {
+            alert(error.message);
+          }
+        });
       }
     });
     return false;
