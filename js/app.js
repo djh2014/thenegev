@@ -1,3 +1,6 @@
+//TODO(gutman): temp:
+price = ''
+
 // Define Globals:
   Parse.initialize("Pe2aVvOhSuUgef67pirBiesOAUdEc0evUOjOVVG2", "ef8ZawXgmHhW8n1zBlHea57RJeBqoH8EcSJePl1X");
   Booking = Parse.Object.extend("Booking");
@@ -44,6 +47,7 @@
     startDate.setHours(0, 0, 0, 0);
     booking.set("start", startDate);
     booking.set("end", endDate);
+    booking.set("price", price || 'Nan');
     booking.set("title", $('#guest-name').val() + ", " + $("#number-of-guests").val() + ", " + $("#room").val());
     booking.set("guest_name", $('#guest-name').val());
     booking.set("guest_name", $('#guest-name').val());
@@ -69,21 +73,6 @@
     var price = pricePerUnit * (numberOfDays/priceType[1]) * booking.number_of_guests;;
     return Math.round(price);
   }
-
-  $("#update-booking").hide();  
-  $('#show-price').click(function(){
-    var booking = convertBookingToJSON(createBookingFromInput());
-    checkIfAvailable(booking, function(isAvailable){
-      if(isAvailable) {
-        var price = calculatePrice(booking);
-        $('#price').html("Available: " + price + "$ total"); 
-        $("#update-booking").show();
-      } else {
-        $('#price').html("Not available. See calendar for more details"); 
-        $("#update-booking").hide();
-      }
-    })
-  })
 //TODO: strip.
   convertBookingToJSON = function(bookingObject) {
     var booking = bookingObject.toJSON();
@@ -151,21 +140,63 @@
                                   {events:getFreeSapcesEvents}]}); 
   // Setup Date pickers:
   $('#datetimepickerStart').datetimepicker({
-      language: 'pt-BR'
+      language: 'en'
   });
   var startPicker = $('#datetimepickerStart').data('datetimepicker');
-  startPicker.setDate(new Date());
+  startPicker.setLocalDate(new Date());
   $('#datetimepickerEnd').datetimepicker({
-      language: 'pt-BR'
+      language: 'en'
   });
   var endPicker = $('#datetimepickerEnd').data('datetimepicker');
-  endPicker.setDate(new Date());
+  endPicker.setLocalDate(new Date());
 
   // Save new booking event
-  $("#update-booking").click(function(event) {
+  $("#place-booking").click(placeBooking);
+  
+  function placeBooking(event){
+    debugger;
+    // 1. Create the booking from the input:
     var booking = createBookingFromInput();
-    booking.save({success: function(res) {location.reload();}});
-  });
+
+    // 2. Get Credit Card details:
+    StripeCheckout.open({
+      key:         'pk_test_hfqcvD791OD2SqlsBxINKbPw',
+      email: true,
+      amount:      Number(booking.get("price"))*100,
+      name:        booking.get("guest_name"),
+      description: 'Book your room',
+      panelLabel:  'Checkout',
+      // 3. Set the token and send to the server to charge and book:
+      token: function(token) {
+        debugger;
+        booking.set("cardToken",token.id);
+        booking.save({success: function(toekn){
+          //TODO(gutman): give better feedback.
+          location.reload();
+        }});
+      }
+    });
+    return false;
+  };
+
+  $("#place-booking").hide();
+  $('#show-price').click(function(){
+    var booking = convertBookingToJSON(createBookingFromInput());
+    checkIfAvailable(booking, function(isAvailable){
+      if(isAvailable) {
+        //TODO(gutman): make it nicer:
+        price = calculatePrice(booking);
+        $('#price').html("Available: " + price + "$ total"); 
+        $("#place-booking").show();
+      } else {
+        $('#price').html("Not available. See calendar for more details"); 
+        $("#place-booking").hide();
+      }
+    })
+  })
+
+
+
   // Handle Stripe:
   // This identifies your website in the createToken call below
   Stripe.setPublishableKey('pk_test_hfqcvD791OD2SqlsBxINKbPw');

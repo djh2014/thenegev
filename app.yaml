@@ -22,8 +22,8 @@ handlers:
   static_files: index.html
   upload: /index.html
 
-# - url: .*
-#   script: main.app
+- url: /charge
+  script: main.app
 
 libraries:
 - name: webapp2

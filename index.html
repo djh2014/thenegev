@@ -22,6 +22,39 @@
     </style>
 </head>
 <body>
+
+  <script src="https://checkout.stripe.com/v2/checkout.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
+
+  <script>
+    $('#customButton').click(function(){
+      var token = function(res) {
+        debugger;
+        
+        $.ajax({
+          type: "GET",
+          url: url,
+          data: {stripeToken:res.id, amount:$('#amount'), },
+          success: function(res) {
+          }
+        });
+
+      };
+      StripeCheckout.open({
+        key:         'pk_test_hfqcvD791OD2SqlsBxINKbPw',
+        amount:      $('#amount'),
+        name:        $('#guest-name'),
+        description: 'Book your room',
+        panelLabel:  'Checkout',
+        token:       token
+      });
+
+      return false;
+    });
+  </script>
+
+
+
 <div class="well">
 	<h1>Hacker House</h1>
 	<div class="row-fuild">
@@ -52,7 +85,7 @@
 	<p>
 	<input class="btn" id="show-price" value="Check Availability"></input><br/>
 	<span id="price"></span>
-	<input class="btn btn-success" id="update-booking" value="Book"></input>
+	<input class="btn btn-success" id="place-booking" value="Book It"></input>
 	</p>
 
 	</div>
@@ -74,6 +107,6 @@
   <script type="text/javascript" src="js/parse-1.2.7.min.js"></script>
   <script type="text/javascript" src="js/stripe.js"></script>
   <script type="text/javascript" src="js/app.js"></script>
-  
+
 </body>
 </html>

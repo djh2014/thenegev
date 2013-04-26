@@ -22,26 +22,23 @@ stripe.api_key = "sk_test_ZToG0PyWTopFzvE0IJsJik2Q"
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
-        self.response.write("I'm not a page!")
-        try:
-        	charge = stripe.Charge.create(
-	      		amount = 10000 * 100,
-	      		currency = "usd",
-	      		card = {
-	      		    'number': 4012888888881881,
-	    			'cvc': 123,
-	    			'exp_month': 02,
-	    			'exp_year': 2015
-	      		},
-	     		description = "abgutman4@gmail.com"
-  			);
-        except Exception, e:
-        	self.redirect('/fail');
+        logging.info('paying');
+        logging.info('stringtoken: ' + self.request.get('stripeToken'))
+        if self.request.get('stripeToken') and self.request.get('amount'):
+            try:
+            	charge = stripe.Charge.create(
+    	      		amount = self.request.get('amount'),
+    	      		currency = "usd",
+    	      		card = self.request.get('stripeToken'),
+                    description = self.request.get('description')
+      			);
+            except Exception, e:
+            	self.redirect('/fail')
+            else:
+            	self.redirect('/success')
         else:
-        	self.redirect('/success');
-        
-    def post(self):
-    	logging.info('paying');
+            logging.info('no token!')
+            self.redirect('/server-error')
     	
 
 app = webapp2.WSGIApplication([
