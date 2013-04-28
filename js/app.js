@@ -5,7 +5,7 @@ price = ''
   Parse.initialize("Pe2aVvOhSuUgef67pirBiesOAUdEc0evUOjOVVG2", "ef8ZawXgmHhW8n1zBlHea57RJeBqoH8EcSJePl1X");
   Booking = Parse.Object.extend("Booking");
   // Rooms and their guests capacity:
-  var ROOMS = [["Shared", 10], ["Private", 1], ["Curatin", 2]];
+  var ROOMS = [["Shared", 12], ["Private", 1], ["Curatin", 2]];
   // Rooms and Prices, per day, per week, per month.
   var ROOMS_PRICES = {"Shared": [50, 300, 1000],
                       "Private": [100, 400, 1400],
@@ -159,7 +159,7 @@ price = ''
 
     // 2. Get Credit Card details:
     StripeCheckout.open({
-      key:         'pk_test_hfqcvD791OD2SqlsBxINKbPw',
+      key:         'pk_live_jiXgFnzeKzJEjIRwP9wGF6mQ',
       email: true,
       amount:      Number(booking.get("price"))*100,
       name:        booking.get("guest_name"),
@@ -171,6 +171,7 @@ price = ''
         booking.save(null, {
           success: function(booking) {
             alert("Book!");
+            location.reload();
           },
           error: function(booking, error) {
             alert(error.message);
@@ -188,14 +189,21 @@ price = ''
       if(isAvailable) {
         //TODO(gutman): make it nicer:
         price = calculatePrice(booking);
-        $('#price').html("Available: " + price + "$ total"); 
+        $('#price').hide({duration:'slow'});
+        $('#price').html("Available: " + price + "$ total");
+        $('#price').show({duration:'slow'});
         $("#place-booking").show();
       } else {
-        $('#price').html("Not available. See calendar for more details"); 
+        $('#price').hide({duration:'slow'});
+        $('#price').html("Sorry Not available.");
+        $('#price').show({duration:'slow'});
         $("#place-booking").hide();
       }
     })
   })
+
+  // TODO(gutman): temp untill fix calendar:
+  $('#calendar').hide();
 
 
 

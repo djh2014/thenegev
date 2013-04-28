@@ -9,7 +9,7 @@ Parse.Cloud.define("hello", function(request, response) {
 Parse.Cloud.beforeSave("Booking", function(request, response) {
   if (request.object.get("cardToken") != null) {
   	var Stripe = require('stripe');
-	Stripe.initialize('sk_test_ZToG0PyWTopFzvE0IJsJik2Q');
+	Stripe.initialize('sk_live_yb2cRe1Fhw2zlxMausdaEZVd');
   	console.log("trying to charge");
   	Stripe.Charges.create({
 		  amount: Number(request.object.get("price")) * 100,
@@ -27,6 +27,9 @@ Parse.Cloud.beforeSave("Booking", function(request, response) {
 	  	  }
 	});
   } else {
-    response.error("Couldn't read card.");
+  	// TODO(gutman): replace it with admin permissions:
+    console.log("Saving without a card. probably AirBNB");
+    request.object.set("airbnb", "yes");
+    response.success();
   }
 });

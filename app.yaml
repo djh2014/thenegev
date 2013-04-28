@@ -5,6 +5,28 @@ api_version: 1
 threadsafe: yes
 
 handlers:
+
+- url: /
+  static_files: index.html
+  upload: index.html
+
+# Templates stuff:
+- url: /assets
+  static_dir: assets
+
+- url: /DOCS
+  static_dir: DOCS
+
+- url: /images
+  static_dir: images
+
+- url: /PSD
+  static_dir: PSD
+
+- url: /ScreenShot
+  static_dir: ScreenShot
+
+# Booking Stuff:
 - url: /css
   static_dir: css
 
@@ -17,13 +39,6 @@ handlers:
 - url: /favicon.ico
   static_files: favicon.ico
   upload: /favicon.ico
-
-- url: /
-  static_files: index.html
-  upload: /index.html
-
-- url: /charge
-  script: main.app
 
 libraries:
 - name: webapp2
